@@ -28,7 +28,7 @@
   * [trustx_read_status](#trustx_read_status)
   * [trustx_sign](#trustx_sign)
   * [trustx_verify](#trustx_verify)
-* [Trust X OpenSSL Engine Usage](#trustx-openssl-engine-usage)
+* [OPTIGA™ Trust X OpenSSL Engine Usage](#trustx-openssl-engine-usage)
   * [rand](#rand)
   * [req](#req)
   * [pkey](#pkey)
@@ -41,7 +41,7 @@
 
 ## About
 
-    This is a command line tools tools and OpenSSL Engine for OPTIGA Trust X on Linux platform.
+    This is a command line tools tools and OpenSSL Engine for OPTIGA™ Trust X on Linux platform.
 
 
 ## Prerequisites
@@ -50,13 +50,13 @@
     - GCC
     - OpenSSL development library (libssl-dev)
     - OpenSSL 1.1.X
-    - OPTIGA Trust X library (source code)
+    - OPTIGA™ Trust X library (source code)
     - pthread
     - rt
     - trustx library (source code)
     
     Following must be functional before the tools could be run :
-    - Communication with Trust X via I2C
+    - Communication with OPTIGA™ Trust X via I2C
     
     Tested platforms:
       - Raspberry PI 3 on Linux kernel 4.19
@@ -70,9 +70,9 @@
     ├── linux_example                     // Source code for executable file
     │   ├── simpleTest_Client.c           // simple example for Client TLS/DTLS in C
     │   ├── simpleTest_Server.c           // simple example for Server TLS/DTLS in C
-    │   ├── trustx_cert.c                 // read and store x.509 certificate in Trust X
+    │   ├── trustx_cert.c                 // read and store x.509 certificate in OPTIGA™ Trust X
     │   └── trustx_chipinfo.c             // list chip info
-    │   ├── trustx_data.c                 // read and store raw data in Trust X
+    │   ├── trustx_data.c                 // read and store raw data in OPTIGA™ Trust X
     │   ├── trustx_keygen.c               // Key generation 
     │   ├── trustx_metadata.c             // read and modify metadata of selected OID 
     │   ├── trustx_read_app1.c            // read all app1 data
@@ -84,23 +84,23 @@
     │   ├── trustx_readmetadata_private.c // read all metadata of keys OID
     │   ├── trustx_readmetadata_status.c  // read all metadata of status OID
     │   ├── trustx_read_status.c          // read all status data
-    │   ├── trustx_sign.c                 // example of Trust X sign function
-    │   └── trustx_verify.c               // example of Trust X verify function
+    │   ├── trustx_sign.c                 // example of OPTIGA™ Trust X sign function
+    │   └── trustx_verify.c               // example of OPTIGA™ Trust X verify function
     ├── Makefile                          // this project Makefile 
     ├── patch            /* patch folder for trustx library              */
-    │   └── pal_os_event.c                // work around patch for trust X pal library
+    │   └── pal_os_event.c                // work around patch for OPTIGA™ Trust X pal library
     ├── README.md                         // this read me file in Markdown format 
-    ├── trustx_engine    /* all trust X OpenSSL Engine source code       */
-    │   ├── trustx_engine.c               // entry point for Trust X OpenSSL Engine 
-    │   ├── trustx_engine_common.h        // header file for Trust X OpenSSL Engine
+    ├── trustx_engine    /* all OPTIGA™ Trust X OpenSSL Engine source code       */
+    │   ├── trustx_engine.c               // entry point for OPTIGA™ Trust X OpenSSL Engine 
+    │   ├── trustx_engine_common.h        // header file for OPTIGA™ Trust X OpenSSL Engine
     │   ├── trustx_engine_ec.c            // ECC engine api
     │   ├── trustx_engine_ec.h            // ECC engine header
     │   ├── trustx_engine_rand.c          // Random number generator  
-    ├── trustx_helper    /* Helper rountine for trust X library           */
+    ├── trustx_helper    /* Helper rountine for OPTIGA™ Trust X library           */
     │   ├── include	     /* Helper include directory                     
     │   │   └── trustx_helper.h	// Helper header file
     │   └── trustx_helper.c		// Helper source 
-    └── trustx_lib       /* Directory for trust X library                 */
+    └── trustx_lib       /* Directory for OPTIGA™ Trust X library                 */
 
 ## Getting Started
 ### Before Building the tools
@@ -109,15 +109,15 @@ Before building the tools ensure that the [prerequisites](#prerequisites) is met
 
 #### Patching the trustx_lib
 
-This patch is needed to work around known issue [sporadic hang or segment fault seem when using Trust X OpenSSL Engine](#sporadic-hang-or-segment-fault-seem-when-using-trust-x-openssl-engine)
+This patch is needed to work around known issue [sporadic hang or segment fault seem when using OPTIGA™ Trust X OpenSSL Engine](#sporadic-hang-or-segment-fault-seem-when-using-trust-x-openssl-engine)
 
-Copy the file *pal_os_event.c* in the patch directory and over write the file with the same file name in Trust X library found in  ~/trustx_lib/pal/linux.
+Copy the file *pal_os_event.c* in the patch directory and over write the file with the same file name in OPTIGA™ Trust X library found in  ~/trustx_lib/pal/linux.
 
 ### First time building the library
 
 As all the tools application depends on the libtrustx.so library hence it has to be build first else linking will fail due to missing library file.
 
-There is 2 approach in building the Trust X library:
+There is 2 approach in building the OPTIGA™ Trust X library:
 
 - Using the *install_debug_lib* parameter
   - this approach creates an symbolic link in the system library folder which is link to the bin folder of the project to libtrustx.so. 
@@ -129,8 +129,8 @@ foo@bar:~$ sudo make install_debug_lib
 ```
 - Using the *install_lib* parameter
   - this approach copy the libtrustx.so into the system library folder. It will over write the symbolic link if it exist.
-  - This is useful for trust X library deployment.
-  - Need to execute every time the trust X library is updated.   
+  - This is useful for OPTIGA™ Trust X library deployment.
+  - Need to execute every time the OPTIGA™ Trust X library is updated.   
 
 ```console 
 foo@bar:~$ sudo make install_lib
@@ -217,7 +217,7 @@ Cleared.
 
 ### trustx_chipinfo
 
-Display the Trust X chip information
+Display the OPTIGA™ Trust X chip information
 
 ```console
 foo@bar:~$ ./bin/trustx_chipinfo
@@ -291,7 +291,7 @@ Device Public Key           [0xE0E1] [Size 0015] :
 
 ### trustx_keygen
 
-Generate Trust X key pair. Key type can be or together to form multiple type.
+Generate OPTIGA™ Trust X key pair. Key type can be or together to form multiple type.
 
 ```console
 
@@ -330,7 +330,7 @@ EKJoF1ivapNqooWa/AgMahX39HOXK6zy5Yf1c/8ijguOWIZpg9JBmZWNWw==
 
 ### trustx_metadata
 
-Modify Trust X OID metadata.
+Modify OPTIGA™ Trust X OID metadata.
 
 ***Warning : -L and -T option is not reversible. Lock set Lcs0 to 0x07 and Terminate set Lcs0 to 0x0F*** 
 
@@ -447,7 +447,7 @@ Application Error Codes     [0xF1C2] [Size 0001] : 00
 
 ### trustx_sign
 
-Simple demo to show the process to sign using Trust X key.
+Simple demo to show the process to sign using OPTIGA™ Trust X key.
 
 ***Note : the option -H is not implemented. Input data is signed as it is, no hash is done.***
 
@@ -486,7 +486,7 @@ foo@bar:~$ hd testsignature.bin
 
 ### trustx_verify
 
-Simple demo to show the process to verify using Trust X library.
+Simple demo to show the process to verify using OPTIGA™ Trust X library.
 
 ```console
 foo@bar:~$ ./bin/trustx_verify 
@@ -543,7 +543,7 @@ Verify Success.
 ========================================================
 ```
 
-## Trust X OpenSSL Engine usage
+## OPTIGA™ Trust X OpenSSL Engine usage
 
 ### rand
 Usuage : Random number generation
@@ -552,13 +552,13 @@ Example
 foo@bar:~$ openssl rand -engine trustx_engine -base64 1024
 ```
 Note : 
-If Trust X random number generation fails, there will still be random number output. 
+If OPTIGA™ Trust X random number generation fails, there will still be random number output. 
 This is control by OpenSSL. The engine api do not have control over it.
 
 ### req
 Usuage : Certificate request / self signed cert / key generation.
 
-Trust X engine uses the -key parameter to pass input to the key generation/usage function.
+OPTIGA™ Trust X engine uses the -key parameter to pass input to the key generation/usage function.
 
 Following is the input format:
 
@@ -566,7 +566,7 @@ Following is the input format:
 
 where :
 
-- OID for Trust X key
+- OID for OPTIGA™ Trust X key
   - if OID 0xE0E0 is used no other input is needed 
 - public key input:
   - public key file name in PEM format
@@ -576,7 +576,7 @@ where :
     - 0xE0F2 store in 0xE1D2,
     - 0xE0F3 store in 0xE1D3
 - NEW:
-  - Generate new key pair in Trust X
+  - Generate new key pair in OPTIGA™ Trust X
 - Key size
   - 0x03 = 256 key length
   - 0x04 = 384 key length
@@ -590,13 +590,13 @@ Example : Generating a certificate request using oid 0xE0F3 to sign and external
 ```console 
 foo@bar:~$ openssl req -keyform engine -engine trustx_engine -key 0xe0f3:teste0f3_pub.pem -new -verify -out teste0e3.csr
 ```
-Example : Generating a certificate request by generating a new key pair in Trust X in oid 0xE0F3. (using default key input of 256 length and auth)
+Example : Generating a certificate request by generating a new key pair in OPTIGA™ Trust X in oid 0xE0F3. (using default key input of 256 length and auth)
 
 ```console 
 foo@bar:~$ openssl req -keyform engine -engine trustx_engine -key 0xe0f3:*:NEW -new -out teste0e3.csr
 ```
 
-Example : Generating a certificate request by generating a new 384 key pair, usage auth/enc/sign in Trust X in oid 0xE0F3 and store public key in 0xE1D3.
+Example : Generating a certificate request by generating a new 384 key pair, usage auth/enc/sign in OPTIGA™ Trust X in oid 0xE0F3 and store public key in 0xE1D3.
 
 ```console 
 foo@bar:~$ openssl req -keyform engine -engine trustx_engine -key 0xe0f3:^:NEW:0x04:0x13 -new -out teste0e3.csr
@@ -606,7 +606,7 @@ foo@bar:~$ openssl req -keyform engine -engine trustx_engine -key 0xe0f3:^:NEW:0
 
 Usuage : Key tools / Key generation
 
-Trust X engine uses the -in parameter to pass input to the key generation/usage function.
+OPTIGA™ Trust X engine uses the -in parameter to pass input to the key generation/usage function.
 
 Following is the input format:
 
@@ -614,13 +614,13 @@ Following is the input format:
 
 (see [req](#req) for input details)
 
-Example generate a new key pair in Trust X in oid 0xE0F3. (using default key input of 256 length and auth)
+Example generate a new key pair in OPTIGA™ Trust X in oid 0xE0F3. (using default key input of 256 length and auth)
 
 ```console 
 foo@bar:~$ openssl pkey -engine trustx_engine -pubout -inform engine -in 0xe0f3:*:NEW -out testpube0f3.pem
 ```
 
-Example generate a new 384 key pair, usage auth/enc/sign in Trust X in oid 0xE0F3 and store public key in 0xE1D3.
+Example generate a new 384 key pair, usage auth/enc/sign in OPTIGA™ Trust X in oid 0xE0F3 and store public key in 0xE1D3.
 
 ```console 
 foo@bar:~$ openssl pkey -engine trustx_engine -pubout -inform engine -in 0xe0f3:^:NEW:0x04:0x13 -out testpube0f3.pem
@@ -636,7 +636,7 @@ foo@bar:~$ openssl dgst -sign 0xe0f3 -engine trustx_engine -keyform engine -out 
 ```
 Example to verify signature.
 
-*Note : verify signature is not using Trust X engine.*
+*Note : verify signature is not using OPTIGA™ Trust X engine.*
 
 ```console 
 foo@bar:~$ openssl dgst -verify testpube0f3.pem -signature helloworld.sig helloworld.txt
@@ -644,17 +644,17 @@ foo@bar:~$ openssl dgst -verify testpube0f3.pem -signature helloworld.sig hellow
 
 ## Simple Example on OpenSSL using C language
 
-In this section, we will describe and demo how the Trust X OpenSSL engine could be coded in 'C' to perform TLD/DTLS communication.
+In this section, we will describe and demo how the OPTIGA™ Trust X OpenSSL engine could be coded in 'C' to perform TLD/DTLS communication.
 
-*Note : The code only shows example on using Trust X for authentication and the secure communication is done via OpenSSL.*
+*Note : The code only shows example on using OPTIGA™ Trust X for authentication and the secure communication is done via OpenSSL.*
 
 ### Setting up the environment for the demonstration
 
 For easy setup, the demo uses the following input for :
 
-- Server (system with Trust X and listening to connection)
+- Server (system with OPTIGA™ Trust X and listening to connection)
   - server certificate : cert store in oid 0xE0E0
-  - Trust X key : 0xE0F0
+  - OPTIGA™ Trust X key : 0xE0F0
   - CA certificate :  OPTIGA_Trust_X_trusted_CAs.pem
   - Port : 5000
   - SSL Protocol : DTLS1.2
@@ -666,7 +666,7 @@ For easy setup, the demo uses the following input for :
 
 #### Server Setup
 
-##### Getting the 0xE0E0 Certificate in Trust X and save it as teste0e0.crt
+##### Getting the 0xE0E0 Certificate in OPTIGA™ Trust X and save it as teste0e0.crt
 
 You may used the below example to get the cert.
 
@@ -686,7 +686,7 @@ The *OPTIGA_Trust_X_trusted_CAs.pem* contain 3 certificate namely:
 
 - Infineon OPTIGA(TM) ECC Root CA
 - Infineon Test Server Intermediate CA
-- Infineon OPTIGA(TM) Trust X CA 101
+- Infineon OPTIGA(TM) OPTIGA™ Trust X CA 101
 
 Below is a quick tips for verifying the Server cert matches the CA cert with OpenSSL
 
@@ -695,7 +695,7 @@ foo@bar:~$ openssl verify -CAfile OPTIGA_Trust_X_trusted_CAs.pem -show_chain tes
 teste0e0.crt: OK
 Chain:
 depth=0:  (untrusted)
-depth=1: C = DE, O = Infineon Technologies AG, OU = OPTIGA(TM), CN = Infineon OPTIGA(TM) Trust X CA 101
+depth=1: C = DE, O = Infineon Technologies AG, OU = OPTIGA(TM), CN = Infineon OPTIGA(TM) OPTIGA™ Trust X CA 101
 depth=2: C = DE, O = Infineon Technologies AG, OU = OPTIGA(TM) Devices, CN = Infineon OPTIGA(TM) ECC Root CA
 ```
 
@@ -854,9 +854,9 @@ foo@bar:~$ ./bin/simpleTest_Server
 In the *simpleTest_Server.c* code ~ line number 54-66. List the macro for changing following input:
 
 - SERVER_CERT      *\<filename for server certificate in PEM format\>* 
-- SERVER_KEY        *<OID of Trust X key used. Refer to [OpenSSL req](#req) for the key input format>*
+- SERVER_KEY        *<OID of OPTIGA™ Trust X key used. Refer to [OpenSSL req](#req) for the key input format>*
 - CA_CERT               *\<CA Certificate filename. if CA cert is chain ensure all cert is in the chain\>*
-- ENGINE_NAME    *\<Trust X engine name\>*
+- ENGINE_NAME    *\<OPTIGA™ Trust X engine name\>*
 - DEFAULT_IP         *\<IP address, not important for server\>*
 - DEFAULT_PORT   *\<Port to use for connection\>*
 - SECURE_COMM   *\<SSL Protocol to be used TLS/DTLS\>*
@@ -880,22 +880,22 @@ In the *simpleTest_Server.c* code ~ line number 54-66. List the macro for changi
 In the *simpleTest_Client.c* code ~ line number 53-63. List the macro for changing following input:
 
 - CA_CERT               *\<CA Certificate filename. if CA cert is chain ensure all cert is in the chain\>*
-- ENGINE_NAME    *\<Engine name. Not important for Client as Client is not using Trust X\>*
+- ENGINE_NAME    *\<Engine name. Not important for Client as Client is not using OPTIGA™ Trust X\>*
 - DEFAULT_IP         *\<IP address of the server\>*
 - DEFAULT_PORT   *\<Port to use for connection\>*
 - SECURE_COMM   *\<SSL Protocol to be used TLS/DTLS\>*
 
-## Known issues
+## Troubleshooting
 
 ### Unable to send GPIO signal in Raspberry without sudo
 
-In the Trust X pal Linux library, you may encounter error "Failed to open gpio .......". This prevent the host from send a reset to the Trust X. To work around this used the sudo command.
+In the OPTIGA™ Trust X pal Linux library, you may encounter error "Failed to open gpio .......". This prevent the host from send a reset to the OPTIGA™ Trust X. To work around this used the sudo command.
 
-Without resetting Trust X, it may fail at time and require to be reset or user needs to run the command again. 
+Without resetting OPTIGA™ Trust X, it may fail at time and require to be reset or user needs to run the command again. 
 
-### Sporadic hang or segment fault seem when using Trust X OpenSSL Engine
+### Sporadic hang or segment fault seem when using the OpenSSL Engine
 
-When sporadic hanging or segment fault is seem when using the Trust X OpenSSL engine (Especially after modification of the engine code). Ensure that the pal_os_event.c patch is implemented. In the engine code ensure that trustx_disarm_timer(); is call after any Trust X library API is used.
+When sporadic hanging or segment fault is seem when using the OpenSSL engine (Especially after modification of the engine code). Ensure that the pal_os_event.c patch is implemented. In the engine code ensure that trustx_disarm_timer(); is call after any OPTIGA™ Trust X library API is used.
 
 ### At time displace may shown miss-align
 
@@ -904,8 +904,3 @@ Run the tools again to refresh the output
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-
-
-
-
