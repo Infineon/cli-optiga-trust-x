@@ -2,73 +2,40 @@
 
 ------
 
-[About](#about)
-
-​		[Prerequisites](#prerequisites)
-
-​		[Contents of Package](#contents-of-package)
-
-[Getting Started](#getting-started)
-
-​		[Before Building the tools](#before-building-the-tools)
-
-​				[Patching the trustx_lib](#patching-the-trustx_lib)
-
-​		[First time building the library](#first-time-building-the-library)
-
-​		[Building the engine](#building-the-engine)
-
-​		[Build the command line tools](#build-the-command-line-tools)
-
-[CLI Tools Usage](#cli-tools-usage)
-
-​		[trustx_cert](#trustx_cert)
-
-​		[trustx_chipinfo](#trustx_chipinfo)
-
-​		[trustx_data](#trustx_data)
-
-​		[trustx_keygen](#trustx_keygen)
-
-​		[trustx_metadata](#trustx_metadata)
-
-​		[trustx_read_app1](#trustx_read_app1)
-
-​		[trustx_read_app2](#trustx_read_app2)
-
-​		[trustx_read_cert](#trustx_read_cert)	
-
-​		[trustx_readmetadata_app1](#trustx_readmetadata_app1)
-
-​		[trustx_readmetadata_app2](#trustx_readmetadata_app2)
-
-​		[trustx_readmetadata_cert](#trustx_readmetadata_cert)
-
-​		[trustx_readmetadata_private](#trustx_readmetadata_private)
-
-​		[trustx_readmetadata_status](#trustx_readmetadata_status)
-
-​		[trustx_read_status](#trustx_read_status)
-
-​		[trustx_sign](#trustx_sign)
-
-​		[trustx_verify](#trustx_verify)
-
-[Trust X OpenSSL Engine Usage](#trustx-openssl-engine-usage)
-
-​		[rand](#rand)
-
-​		[req](#req)
-
-​		[pkey](#pkey)
-
-​		[dgst](#dgst)
-
-[Simple Example on OpenSSL using C language](#simple-example-on-openssl-using-c-language)
-
-[Known Issues](#known-issues)
-
-[License](#license)
+* [About](#about)
+  * [Prerequisites](#prerequisites)
+  * [Contents of Package](#contents-of-package)
+* [Getting Started](#getting-started)
+  * [Before Building the tools](#before-building-the-tools)
+  * [Patching the trustx_lib](#patching-the-trustx_lib)
+  * [First time building the library](#first-time-building-the-library)
+  * [Building the engine](#building-the-engine)
+  * [Build the command line tools](#build-the-command-line-tools)
+* [CLI Tools Usage](#cli-tools-usage)
+  * [trustx_cert](#trustx_cert)
+  * [trustx_chipinfo](#trustx_chipinfo)
+  * [trustx_data](#trustx_data)
+  * [trustx_keygen](#trustx_keygen)
+  * [trustx_metadata](#trustx_metadata)
+  * [trustx_read_app1](#trustx_read_app1)
+  * [trustx_read_app2](#trustx_read_app2)
+  * [trustx_read_cert](#trustx_read_cert)	
+  * [trustx_readmetadata_app1](#trustx_readmetadata_app1)
+  * [trustx_readmetadata_app2](#trustx_readmetadata_app2)
+  * [trustx_readmetadata_cert](#trustx_readmetadata_cert)
+  * [trustx_readmetadata_private](#trustx_readmetadata_private)
+  * [trustx_readmetadata_status](#trustx_readmetadata_status)
+  * [trustx_read_status](#trustx_read_status)
+  * [trustx_sign](#trustx_sign)
+  * [trustx_verify](#trustx_verify)
+* [Trust X OpenSSL Engine Usage](#trustx-openssl-engine-usage)
+  * [rand](#rand)
+  * [req](#req)
+  * [pkey](#pkey)
+  * [dgst](#dgst)
+* [Simple Example on OpenSSL using C language](#simple-example-on-openssl-using-c-language)
+* [Known Issues](#known-issues)
+* [License](#license)
 
 ------
 
