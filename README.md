@@ -2,16 +2,16 @@
 
 ------
 
-* [About](#about)
+* **[About](#about)**
   * [Prerequisites](#prerequisites)
   * [Contents of Package](#contents-of-package)
-* [Getting Started](#getting-started)
+* **[Getting Started](#getting-started)**
   * [Before Building the tools](#before-building-the-tools)
   * [Patching the trustx_lib](#patching-the-trustx_lib)
   * [First time building the library](#first-time-building-the-library)
   * [Building the engine](#building-the-engine)
   * [Build the command line tools](#build-the-command-line-tools)
-* [CLI Tools Usage](#cli-tools-usage)
+* **[CLI Tools Usage](#cli-tools-usage)**
   * [trustx_cert](#trustx_cert)
   * [trustx_chipinfo](#trustx_chipinfo)
   * [trustx_data](#trustx_data)
@@ -28,14 +28,14 @@
   * [trustx_read_status](#trustx_read_status)
   * [trustx_sign](#trustx_sign)
   * [trustx_verify](#trustx_verify)
-* [OPTIGA™ Trust X OpenSSL Engine Usage](#trustx-openssl-engine-usage)
+* **[OPTIGA™ Trust X OpenSSL Engine Usage](#trustx-openssl-engine-usage)**
   * [rand](#rand)
   * [req](#req)
   * [pkey](#pkey)
   * [dgst](#dgst)
-* [Simple Example on OpenSSL using C language](#simple-example-on-openssl-using-c-language)
-* [Known Issues](#known-issues)
-* [License](#license)
+* **[Simple Example on OpenSSL using C language](#simple-example-on-openssl-using-c-language)**
+* **[Known Issues](#known-issues)**
+* **[License](#license)**
 
 ------
 
