@@ -33,8 +33,9 @@
   * [req](#req)
   * [pkey](#pkey)
   * [dgst](#dgst)
+  * [Using Trust X OpenSSL engine to sign and issue certificate](#using-trust-x-openssl-engine-to-sign-and-issue-certificate)
 * **[Simple Example on OpenSSL using C language](#simple-example-on-openssl-using-c-language)**
-* **[Known Issues](#known-issues)**
+* **[Troubleshooting](#troubleshooting)**
 * **[License](#license)**
 
 ------
@@ -641,6 +642,180 @@ Example to verify signature.
 ```console 
 foo@bar:~$ openssl dgst -verify testpube0f3.pem -signature helloworld.sig helloworld.txt
 ```
+
+### Using Trust X OpenSSL engine to sign and issue certificate
+
+In this section, we will demonstrate how you can use Trust X OpenSSL engine to enable Trust X as a simple Certificate Authorities (CA) without revocation and tracking of certificate it issue.
+
+#### Generating CA key pair and Creating Trust X CA self sign certificate
+
+Create Trust X CA key pair with the following parameters: 
+
+- oid 0xE0F2 
+- public key store in 0xE1D2
+- Self signed CA cert with subject :
+  - Organization : Infineon OPTIGA(TM) Trust X
+  - Common Name : UID of Trust X 
+  - expiry days : ~10 years 
+
+```console
+foo@bar:~$ openssl req -keyform engine -engine trustx_engine -key 0xe0f2:^:NEW -new -x509 -days 3650 -subj /O="Infineon OPTIGA(TM) Trust X"/CN="CD16336B01001C000100000A085255000A005C0046801010711118" -out teste0f2.crt 
+
+engine "trustx_engine" set.
+
+foo@bar:~$ openssl x509 -in teste0f2.crt -text
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            89:0c:9b:1a:95:67:db:ac
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: O = Infineon OPTIGA(TM) Trust X, CN = CD16336B01001C000100000A085255000A005C0046801010711118
+        Validity
+            Not Before: Jun  8 00:56:06 2019 GMT
+            Not After : Jun  5 00:56:06 2029 GMT
+        Subject: O = Infineon OPTIGA(TM) Trust X, CN = CD16336B01001C000100000A085255000A005C0046801010711118
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:e2:db:0f:f8:74:f5:17:51:05:be:92:1d:7a:7a:
+                    d4:23:37:ba:31:3c:59:01:43:8d:5a:3b:03:c5:d6:
+                    44:52:6d:df:80:05:2e:e6:a3:8c:72:de:3e:c7:e3:
+                    24:72:ac:69:70:87:b2:14:93:d3:e0:27:23:a1:47:
+                    8b:2c:9d:58:6b
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                79:B6:BB:85:A6:97:5F:D8:3C:0B:A5:16:9C:90:36:CD:E9:0D:CC:B6
+            X509v3 Authority Key Identifier: 
+                keyid:79:B6:BB:85:A6:97:5F:D8:3C:0B:A5:16:9C:90:36:CD:E9:0D:CC:B6
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+    Signature Algorithm: ecdsa-with-SHA256
+         30:44:02:20:2e:5a:cd:ce:45:00:1b:7d:43:2e:45:a5:23:ab:
+         33:81:8d:6a:0b:7d:6f:d5:d5:b2:47:c3:94:c7:45:aa:ec:b7:
+         02:20:55:b3:c2:f5:d1:2d:18:09:07:e5:17:a9:ff:3f:1e:59:
+         81:2b:02:b8:77:f5:54:ff:6e:bd:51:a5:da:64:b4:d8
+-----BEGIN CERTIFICATE-----
+MIICFzCCAb6gAwIBAgIJAIkMmxqVZ9usMAoGCCqGSM49BAMCMGcxJDAiBgNVBAoM
+G0luZmluZW9uIE9QVElHQShUTSkgVHJ1c3QgWDE/MD0GA1UEAww2Q0QxNjMzNkIw
+MTAwMUMwMDAxMDAwMDBBMDg1MjU1MDAwQTAwNUMwMDQ2ODAxMDEwNzExMTE4MB4X
+DTE5MDYwODAwNTYwNloXDTI5MDYwNTAwNTYwNlowZzEkMCIGA1UECgwbSW5maW5l
+b24gT1BUSUdBKFRNKSBUcnVzdCBYMT8wPQYDVQQDDDZDRDE2MzM2QjAxMDAxQzAw
+MDEwMDAwMEEwODUyNTUwMDBBMDA1QzAwNDY4MDEwMTA3MTExMTgwWTATBgcqhkjO
+PQIBBggqhkjOPQMBBwNCAATi2w/4dPUXUQW+kh16etQjN7oxPFkBQ41aOwPF1kRS
+bd+ABS7mo4xy3j7H4yRyrGlwh7IUk9PgJyOhR4ssnVhro1MwUTAdBgNVHQ4EFgQU
+eba7haaXX9g8C6UWnJA2zekNzLYwHwYDVR0jBBgwFoAUeba7haaXX9g8C6UWnJA2
+zekNzLYwDwYDVR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNHADBEAiAuWs3ORQAb
+fUMuRaUjqzOBjWoLfW/V1bJHw5THRarstwIgVbPC9dEtGAkH5Rep/z8eWYErArh3
+9VT/br1RpdpktNg=
+-----END CERTIFICATE-----
+```
+
+#### Generating a Certificate Request (CSR)
+
+You may use the example given in [req](#req) to generate a CSR or used any valid CSR
+
+#### Signing and issuing the Certificate with Trust X
+
+In order to generate a x.509 V3 certificate you will need to create an extension file. Following shows a sample of the extension file :
+
+```console
+foo@bar:~$ cat openssl.cnf 
+[ cert_ext ]
+subjectKeyIdentifier=hash
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=clientAuth,serverAuth
+
+[ cert_ext1 ]
+subjectKeyIdentifier=hash
+keyUsage=digitalSignature,keyEncipherment
+extendedKeyUsage=clientAuth
+```
+
+Following demonstrate how you can issue and sign certificate with Trust X with the following inputs:
+
+- input csr file : teste0f3.csr
+- CA Cert : teste0f2.crt
+- CA key : 0xE0F2 with public key store in 0xE1D2
+- Create new serial number for certificate (serial number is store in teste0f2.srl)
+- using extension cert_ext in extension file
+- expiry days : 1 year
+
+```
+foo@bar:~$ openssl x509 -CAkeyform engine -engine trustx_engine -req -in teste0f3.csr -CA teste0f2.crt -CAkey 0xe0f2:^ -next_serial -out teste0f3.crt -days 365 -sha384 -extfile openssl.cnf -extensions cert_ext
+
+engine "trustx_engine" set.
+Signature ok
+subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd
+Getting CA Private Key
+
+foo@bar:~$ openssl x509 -in teste0f3.crt -text
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            a7:13:94:89:da:6a:95:a8
+    Signature Algorithm: ecdsa-with-SHA384
+        Issuer: O = Infineon OPTIGA(TM) Trust X, CN = CD16336B01001C000100000A085255000A005C0046801010711118
+        Validity
+            Not Before: Jun  8 01:36:36 2019 GMT
+            Not After : Jun  7 01:36:36 2020 GMT
+        Subject: C = AU, ST = Some-State, O = Internet Widgits Pty Ltd
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:23:06:58:52:5e:84:fa:a3:93:9f:7b:61:e7:3f:
+                    1d:85:c1:0d:3b:8e:af:c6:cb:01:53:a4:6e:18:0a:
+                    c1:6e:d5:2c:ee:45:74:e3:17:2f:38:fe:d6:73:17:
+                    18:15:23:14:bf:d9:d9:c8:e6:26:e7:8c:36:dc:7c:
+                    88:4c:b1:15:f7
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                11:31:44:74:35:4D:35:84:6F:1F:8D:40:5D:BE:D1:AA:A2:54:27:2E
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication, TLS Web Server Authentication
+    Signature Algorithm: ecdsa-with-SHA384
+         30:46:02:21:00:f1:41:27:c5:e2:d3:06:59:15:d9:d4:8b:89:
+         08:bd:94:aa:b9:a4:b4:5b:31:08:08:86:bd:a5:55:88:f1:f2:
+         b8:02:21:00:a9:9c:de:9d:1c:79:b6:d0:0a:8d:03:1e:87:c3:
+         8e:23:b0:78:bf:7e:0a:83:15:18:d9:80:de:66:95:ed:8a:6d
+-----BEGIN CERTIFICATE-----
+MIIB9DCCAZmgAwIBAgIJAKcTlInaapWoMAoGCCqGSM49BAMDMGcxJDAiBgNVBAoM
+G0luZmluZW9uIE9QVElHQShUTSkgVHJ1c3QgWDE/MD0GA1UEAww2Q0QxNjMzNkIw
+MTAwMUMwMDAxMDAwMDBBMDg1MjU1MDAwQTAwNUMwMDQ2ODAxMDEwNzExMTE4MB4X
+DTE5MDYwODAxMzYzNloXDTIwMDYwNzAxMzYzNlowRTELMAkGA1UEBhMCQVUxEzAR
+BgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5
+IEx0ZDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCMGWFJehPqjk597Yec/HYXB
+DTuOr8bLAVOkbhgKwW7VLO5FdOMXLzj+1nMXGBUjFL/Z2cjmJueMNtx8iEyxFfej
+UDBOMB0GA1UdDgQWBBQRMUR0NU01hG8fjUBdvtGqolQnLjAOBgNVHQ8BAf8EBAMC
+BaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMAoGCCqGSM49BAMDA0kA
+MEYCIQDxQSfF4tMGWRXZ1IuJCL2UqrmktFsxCAiGvaVViPHyuAIhAKmc3p0cebbQ
+Co0DHofDjiOweL9+CoMVGNmA3maV7Ypt
+-----END CERTIFICATE-----
+```
+
+Below is a quick tips for verifying the Server cert matches the CA cert with OpenSSL
+
+```console
+foo@bar:~$ openssl verify -CAfile teste0f2.crt -show_chain teste0f3.crt
+
+teste0f3.crt: OK
+Chain:
+depth=0: C = AU, ST = Some-State, O = Internet Widgits Pty Ltd (untrusted)
+depth=1: O = Infineon OPTIGA(TM) Trust X, CN = CD16336B01001C000100000A085255000A005C0046801010711118
+```
+
+## 
 
 ## Simple Example on OpenSSL using C language
 
