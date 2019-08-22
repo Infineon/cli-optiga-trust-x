@@ -130,7 +130,6 @@ static int trustxEngine_getrandom(unsigned char *buf, int num)
 	}while(FALSE);
 	
 	#undef MAX_RAND_INPUT
-	trustx_disarm_timer(); // temp work around for trustx lib
 	TRUSTX_ENGINE_DBGFN("<");	
 	return ret;
 }

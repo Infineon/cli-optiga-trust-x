@@ -119,8 +119,4 @@ extern trustx_ctx_t trustx_ctx;
 uint16_t trustxEngine_init_ec(ENGINE *e);
 uint16_t trustxEngine_init_rand(ENGINE *e);
 
-// This is a temporarily work around 
-void trustx_arm_timer(void);
-void trustx_disarm_timer(void);
-
 #endif // _TRUSTX_ENGINE_COMMON_

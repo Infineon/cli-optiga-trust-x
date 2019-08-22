@@ -189,13 +189,6 @@ static uint32_t parseKeyParams(const char *aArg)
 	return value;
 }
 
-void trustx_disarm_timer(void)
-{
-  TRUSTX_ENGINE_DBGFN(">");
-  pal_os_event_disarm();
-  TRUSTX_ENGINE_DBGFN("<");
-}
-
 
 /*
  * With command
@@ -448,12 +441,10 @@ EVP_PKEY *trustx_loadKey(
 		}
 	}
 
-    TRUSTX_ENGINE_DBGFN("<");
-    trustx_disarm_timer();    
+    TRUSTX_ENGINE_DBGFN("<"); 
     return key; // SUCCESS
   }
 
-  trustx_disarm_timer();
   TRUSTX_ENGINE_ERRFN("<");
   return (EVP_PKEY *) NULL; // RETURN FAIL
 }
@@ -494,7 +485,6 @@ static ECDSA_SIG* trustx_ecdsa_sign(
     {
       TRUSTX_ENGINE_ERRFN("Could not get signature form OPTIGA : %x", return_status);
 
-      trustx_disarm_timer();
       break;
     }
 
@@ -509,7 +499,6 @@ static ECDSA_SIG* trustx_ecdsa_sign(
 
   }while(FALSE);
   
-  trustx_disarm_timer();
   TRUSTX_ENGINE_DBGFN("<");
   //return ret;
   return ecdsa_sig;

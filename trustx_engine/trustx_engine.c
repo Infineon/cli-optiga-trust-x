@@ -104,7 +104,6 @@ static int engine_destroy(ENGINE *e)
 static int engine_finish(ENGINE *e)
 {
   TRUSTX_ENGINE_DBGFN("> Engine 0x%x finish (releasing functional reference)", (unsigned int) e);
-  //trustx_disarm_timer();
   TRUSTX_ENGINE_DBGFN("<");
   return TRUSTX_ENGINE_SUCCESS;
 }

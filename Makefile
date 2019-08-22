@@ -25,9 +25,11 @@
 
 TRUSTX = trustx_lib
 
+BUILD_FOR_RPI = YES
+BUILD_FOR_ULTRA96 = NO
 
-LIBDIR =  $(TRUSTX)/pal/linux
-LIBDIR += $(TRUSTX)/optiga/util
+PALDIR =  $(TRUSTX)/pal/linux
+LIBDIR = $(TRUSTX)/optiga/util
 #LIBDIR += $(TRUSTX)/optiga/dtls
 LIBDIR += $(TRUSTX)/optiga/crypt
 LIBDIR += $(TRUSTX)/optiga/comms
@@ -61,14 +63,31 @@ INCDIR += trustx_helper/include
 INCDIR += trustx_engine
 INCDIR += $(TRUSTX)/examples/ecdsa_utils
 
+
 ifdef INCDIR
-INCSRC := $(shell find $(INCDIR) -name '*.h')
-INCDIR := $(addprefix -I ,$(INCDIR))
+	INCSRC := $(shell find $(INCDIR) -name '*.h')
+	INCDIR := $(addprefix -I ,$(INCDIR))
 endif
 
 ifdef LIBDIR
-	LIBSRC := $(shell find $(LIBDIR) -name '*.c') 
-	LIBOBJ := $(patsubst %.c,%.o,$(LIBSRC))
+	ifdef PALDIR
+	        LIBSRC =  $(PALDIR)/pal.c
+	        LIBSRC += $(PALDIR)/pal_gpio.c
+	        LIBSRC += $(PALDIR)/pal_i2c.c
+	        LIBSRC += $(PALDIR)/pal_os_event.c
+        	LIBSRC += $(PALDIR)/pal_os_lock.c
+	        LIBSRC += $(PALDIR)/pal_os_timer.c
+	        ifeq ($(BUILD_FOR_RPI), YES)
+	                LIBSRC += $(PALDIR)/target/rpi3/pal_ifx_i2c_config.c
+        	endif
+
+	        ifeq ($(BUILD_FOR_ULTRA96), YES)
+                	LIBSRC += $(PALDIR)/target/ultra96/pal_ifx_i2c_config.c
+        	endif
+	endif
+
+        LIBSRC += $(shell find $(LIBDIR) -name '*.c')
+        LIBOBJ := $(patsubst %.c,%.o,$(LIBSRC))
 	LIB = libtrustx.so
 endif
 
@@ -104,9 +123,36 @@ LDFLAGS += -lpthread
 LDFLAGS += -lssl
 LDFLAGS += -lcrypto
 
-LDFLAGS_1 = -ltrustx
+LDFLAGS_1 = -L$(BINDIR) -Wl,-R$(BINDIR)
+LDFLAGS_1 += -ltrustx
 
-all : $(BINDIR)/$(LIB) $(APPS) $(BINDIR)/$(ENG)
+.Phony : install uninstall clean install_lib install_engine
+
+install : install_lib $(APPS) install_engine
+
+uninstall: clean
+
+clean :
+	@echo "Removing *.o from $(LIBDIR)" 
+	@rm -rf $(LIBOBJ)
+	@echo "Removing *.o from $(OTHDIR)" 
+	@rm -rf $(OTHOBJ)
+	@echo "Removing *.o from $(APPDIR)"
+	@rm -rf $(APPOBJ)
+	@echo "Removing *.o from $(ENGDIR)"
+	@rm -rf $(ENGOBJ)
+	@echo "Removing all application from $(APPDIR)"	
+	@rm -rf $(APPS)
+	@echo "Removing all application from $(BINDIR)"	
+	@rm -rf bin/*
+	@echo "Removing openssl symbolic link from $(ENGINE_INSTALL_DIR)"	
+	@rm $(ENGINE_INSTALL_DIR)/$(ENG)
+
+install_lib: $(BINDIR)/$(LIB)
+
+install_engine: $(BINDIR)/$(ENG)
+	@echo "Create symbolic link to the openssl engine $(ENGINE_INSTALL_DIR)/$(ENG)"
+	@ln -s $(realpath $(BINDIR)/$(ENG)) $(ENGINE_INSTALL_DIR)/$(ENG) 
 
 $(BINDIR)/$(ENG): %: $(ENGOBJ) $(INCSRC) $(BINDIR)/$(LIB)
 	@echo "******* Linking $@ "
@@ -131,44 +177,4 @@ $(LIBOBJ): %.o: %.c $(INCSRC)
 %.o: %.c $(INCSRC)
 	@echo "------- Generating application objects: $< "
 	@$(CC) $(CFLAGS) $< -o $@
-
-.Phony : clean install uninstall test
-clean :
-	@echo "Removing *.o from $(LIBDIR)" 
-	@rm -rf $(LIBOBJ)
-	@echo "Removing *.o from $(OTHDIR)" 
-	@rm -rf $(OTHOBJ)
-	@echo "Removing *.o from $(APPDIR)"
-	@rm -rf $(APPOBJ)
-	@echo "Removing *.o from $(ENGDIR)"
-	@rm -rf $(ENGOBJ)
-	@echo "Removing all application from $(APPDIR)"	
-	@rm -rf $(APPS)
-	@echo "Removing all application from $(BINDIR)"	
-	@rm -rf bin/*
-
-install_debug_lib: uninstall_lib $(BINDIR)/$(LIB)
-	@echo "Create debug link library $(LIB_INSTALL_DIR)/$(LIB)"	
-	@ln -s $(realpath $(BINDIR)/$(LIB)) $(LIB_INSTALL_DIR)/$(LIB)
-
-install_lib: uninstall_lib $(BINDIR)/$(LIB)
-	@echo "$(LIB_INSTALL_DIR)/$(LIB)"	
-	@cp $(BINDIR)/$(LIB) $(LIB_INSTALL_DIR)/$(LIB)
-
-install_debug_engine: uninstall_engine $(BINDIR)/$(ENG)
-	@echo "Create debug link library $(ENGINE_INSTALL_DIR)/$(ENG)"	
-	@ln -s $(realpath $(BINDIR)/$(ENG)) $(ENGINE_INSTALL_DIR)/$(ENG)
-
-install_engine: uninstall_engine $(BINDIR)/$(ENG) 
-	@echo "Installing library : $(ENGINE_INSTALL_DIR)/$(ENG)"	
-	@mkdir -p $(ENGINE_INSTALL_DIR)
-	@cp $(BINDIR)/$(ENG) $(ENGINE_INSTALL_DIR)/$(ENG)
-
-uninstall_engine:
-	@echo "Removing library : $(ENGINE_INSTALL_DIR)/$(ENG)"	
-	@rm -f $(ENGINE_INSTALL_DIR)/$(ENG)
-
-uninstall_lib:
-	@echo "Removing library : $(LIB_INSTALL_DIR)/$(LIB)"	
-	@rm -f $(LIB_INSTALL_DIR)/$(LIB)
 	
