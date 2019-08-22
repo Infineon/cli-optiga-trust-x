@@ -112,6 +112,7 @@ Before building the tools ensure that the [prerequisites](#prerequisites) is met
 To build the command line tools, openssl engine (shared library) and Trust X shared library execute the following.
 
 ```console
+foo@bar:~$ make
 foo@bar:~$ sudo make install
 ```
 
@@ -119,6 +120,12 @@ to unisntall
 
 ```console
 foo@bar:~$ sudo make uninstall
+```
+
+to clean
+
+```console
+foo@bar:~$ make clean
 ```
 
 ### After Building the tools
