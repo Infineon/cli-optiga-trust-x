@@ -126,11 +126,18 @@ LDFLAGS += -lcrypto
 LDFLAGS_1 = -L$(BINDIR) -Wl,-R$(BINDIR)
 LDFLAGS_1 += -ltrustx
 
-.Phony : install uninstall clean install_lib install_engine
+.Phony : install uninstall all clean install_lib install_engine
 
-install : install_lib $(APPS) install_engine
+all : $(BINDIR)/$(LIB) $(APPS) $(BINDIR)/$(ENG)
 
-uninstall: clean
+
+install:
+	@echo "Create symbolic link to the openssl engine $(ENGINE_INSTALL_DIR)/$(ENG)"
+	@ln -s $(realpath $(BINDIR)/$(ENG)) $(ENGINE_INSTALL_DIR)/$(ENG)
+	
+uninstall:
+	@echo "Removing openssl symbolic link from $(ENGINE_INSTALL_DIR)"	
+	@rm $(ENGINE_INSTALL_DIR)/$(ENG)
 
 clean :
 	@echo "Removing *.o from $(LIBDIR)" 
@@ -145,15 +152,7 @@ clean :
 	@rm -rf $(APPS)
 	@echo "Removing all application from $(BINDIR)"	
 	@rm -rf bin/*
-	@echo "Removing openssl symbolic link from $(ENGINE_INSTALL_DIR)"	
-	@rm $(ENGINE_INSTALL_DIR)/$(ENG)
-
-install_lib: $(BINDIR)/$(LIB)
-
-install_engine: $(BINDIR)/$(ENG)
-	@echo "Create symbolic link to the openssl engine $(ENGINE_INSTALL_DIR)/$(ENG)"
-	@ln -s $(realpath $(BINDIR)/$(ENG)) $(ENGINE_INSTALL_DIR)/$(ENG) 
-
+	
 $(BINDIR)/$(ENG): %: $(ENGOBJ) $(INCSRC) $(BINDIR)/$(LIB)
 	@echo "******* Linking $@ "
 	@mkdir -p bin
