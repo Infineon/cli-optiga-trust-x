@@ -7,7 +7,6 @@
   * [Contents of Package](#contents-of-package)
 * **[Getting Started](#getting-started)**
   * [Before Building the tools](#before-building-the-tools)
-  * [Patching the trustx_lib](#patching-the-trustx_lib)
   * [First time building the library](#first-time-building-the-library)
   * [Building the engine](#building-the-engine)
   * [Build the command line tools](#build-the-command-line-tools)
@@ -108,55 +107,32 @@
 
 Before building the tools ensure that the [prerequisites](#prerequisites) is met.
 
-#### Patching the trustx_lib
+### Build
 
-This patch is needed to work around known issue [sporadic hang or segment fault seem when using OPTIGA™ Trust X OpenSSL Engine](#sporadic-hang-or-segment-fault-seem-when-using-trust-x-openssl-engine)
-
-Copy the file *pal_os_event.c* in the patch directory and over write the file with the same file name in OPTIGA™ Trust X library found in  ~/trustx_lib/pal/linux.
-
-### First time building the library
-
-As all the tools application depends on the libtrustx.so library hence it has to be build first else linking will fail due to missing library file.
-
-There is 2 approach in building the OPTIGA™ Trust X library:
-
-- Using the *install_debug_lib* parameter
-  - this approach creates an symbolic link in the system library folder which is link to the bin folder of the project to libtrustx.so. 
-  - This is useful for development and debugging as we do not need to keep updating the library folder which requires root access.
-  - Need to perform this only once. 
-
-```console 
-foo@bar:~$ sudo make install_debug_lib
-```
-- Using the *install_lib* parameter
-  - this approach copy the libtrustx.so into the system library folder. It will over write the symbolic link if it exist.
-  - This is useful for OPTIGA™ Trust X library deployment.
-  - Need to execute every time the OPTIGA™ Trust X library is updated.   
-
-```console 
-foo@bar:~$ sudo make install_lib
-```
-
-### Building the engine
-```console 
-foo@bar:~$ sudo make install_debug_engine
-```
-or 
-```console 
-foo@bar:~$ sudo make install_engine
-```
-
-Note:
-- If debug is used subsequence building just do a *make* as the Makefile creates a 
-  soft-link to the bin directory
-- If without debug than every time you build the library or engine you must reinstall
-
-### Build the command line tools
-
-To build the command line tools just perform a *make*.
+To build the command line tools, openssl engine (shared library) and Trust X shared library execute the following.
 
 ```console
-foo@bar:~$ make
+foo@bar:~$ sudo make install
+```
+
+to unisntall
+
+```console
+foo@bar:~$ sudo make uninstall
+```
+
+### After Building the tools
+
+After building the tools you need to do the following:
+
+If you work under Raspberry Pi all gpio related operations are already allowed for users in group `gpio` via udev rules.
+It means in order to run all command line tools in non-sudo mode you need to add yourself into this group; i.e.
+
+```console
+foo@bar:~$ sudo usermod -a -G gpio pi
+foo@bar:~$ groups
+#Sample output follows
+pi adm dialout cdrom sudo audio video plugdev games users input netdev gpio i2c spi
 ```
 
 ## CLI Tools Usage
