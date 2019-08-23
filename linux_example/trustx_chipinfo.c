@@ -85,7 +85,7 @@ int main (int argc, char **argv)
 	}
 	printf("\n");
 
-	printf("Chip software build ");	
+	printf("Chip software build: \n");  
 	if ((UID.st.rgbESWBuild[0] == 0x05) && (UID.st.rgbESWBuild[1] == 0x10))
 		printf("OPTIGA(TM) Trust X; Firmware Version: 1.0.510\n");
 	else if ((UID.st.rgbESWBuild[0] == 0x07) && (UID.st.rgbESWBuild[1] == 0x15))
