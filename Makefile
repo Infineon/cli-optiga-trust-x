@@ -137,7 +137,7 @@ install:
 	@echo "Create symbolic link to trustx_lib $(LIB_INSTALL_DIR)/$(LIB)"
 	@ln -s $(realpath $(BINDIR)/$(LIB)) $(LIB_INSTALL_DIR)/$(LIB)
 	
-uninstall:
+uninstall: clean
 	@echo "Removing openssl symbolic link from $(ENGINE_INSTALL_DIR)"	
 	@rm $(ENGINE_INSTALL_DIR)/$(ENG)
 	@echo "Removing trustx_lib $(LIB_INSTALL_DIR)/$(LIB)"
