@@ -31,6 +31,7 @@
 #include <openssl/x509v3.h>
 #include <openssl/bio.h>
 #include <openssl/pem.h>
+#include <openssl/sha.h>
 
 #include "optiga/ifx_i2c/ifx_i2c_config.h"
 #include "optiga/optiga_util.h"
@@ -149,8 +150,14 @@ static uint16_t _readFrom(uint8_t *data, uint8_t *filename)
 	len = fread(buf, 1, sizeof(buf), datafile); 
 	if (len > 0)
 	{
-		ret = len;
-		memcpy(data,buf,len);
+		printf("Input data : \n");
+		_hexdump(buf,len);
+
+		SHA256(buf, len, data);
+
+		printf("Digest : \n");
+		_hexdump(data,32);
+		ret = 32;
 	}
 
 	fclose(datafile);
@@ -257,9 +264,6 @@ int main (int argc, char **argv)
 				printf("Error reading file!!!\n");
 				break;				
 			}
-			
-			printf("Input data : \n");
-			_hexdump(digest,digestLen);	
 
 			return_status = optiga_crypt_ecdsa_sign(digest,
 													digestLen,

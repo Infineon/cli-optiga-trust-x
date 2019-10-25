@@ -126,7 +126,7 @@ uint16_t _writeTo(uint8_t *buf, uint32_t len, const char *filename)
 
 }
 
-static uint16_t _readFrom(uint8_t *data, uint8_t *filename)
+static uint16_t _readFrom(uint8_t no_hash, uint8_t *data, uint8_t *filename)
 {
 	
 	FILE *datafile;
@@ -145,14 +145,28 @@ static uint16_t _readFrom(uint8_t *data, uint8_t *filename)
 	len = fread(buf, 1, sizeof(buf), datafile); 
 	if (len > 0)
 	{
-		ret = len;
-		memcpy(data,buf,len);
+		printf("Input data : \n");
+		_hexdump(buf,len);
+
+		if (!no_hash) 
+		{
+			SHA256(buf, len, data);
+
+			printf("Digest : \n");
+			_hexdump(data,32);
+			ret = 32;
+		}
+		else
+		{
+			// Data buf should fit the signature
+			memcpy(data, buf, len);
+			ret = len;
+		}
 	}
 
 	fclose(datafile);
 
 	return ret;
-
 }
 
 
@@ -257,14 +271,14 @@ int main (int argc, char **argv)
 			printf("Input File Name : %s \n", inFile);
 			printf("Signature File Name : %s \n", signatureFile);
 
-			digestLen = _readFrom(digest, (uint8_t *) inFile);
+			digestLen = _readFrom(0, digest, (uint8_t *) inFile);
 			if (digestLen == 0)
 			{
 				printf("Error reading input file!!!\n");
 				break;				
 			}
 
-			signatureLen = _readFrom(signature, (uint8_t *) signatureFile);
+			signatureLen = _readFrom(1, signature, (uint8_t *) signatureFile);
 			if (signatureLen == 0)
 			{
 				printf("Error signature reading file!!!\n");
@@ -313,14 +327,14 @@ int main (int argc, char **argv)
 			printf("Input File Name : %s \n", inFile);
 			printf("Signature File Name : %s \n", signatureFile);
 
-			digestLen = _readFrom(digest, (uint8_t *) inFile);
+			digestLen = _readFrom(0, digest, (uint8_t *) inFile);
 			if (digestLen == 0)
 			{
 				printf("Error reading input file!!!\n");
 				break;				
 			}
 
-			signatureLen = _readFrom(signature, (uint8_t *) signatureFile);
+			signatureLen = _readFrom(1, signature, (uint8_t *) signatureFile);
 			if (signatureLen == 0)
 			{
 				printf("Error signature reading file!!!\n");
