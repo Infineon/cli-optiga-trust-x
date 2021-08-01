@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
@@ -41,11 +42,11 @@
 #define MAX_OID_PUB_CERT_SIZE	1728
 
 typedef struct _OPTFLAG {
+	xuint16_t	i2cbus		: 1;
 	uint16_t	read		: 1;
 	uint16_t	type		: 1;
 	uint16_t	output		: 1;
 	uint16_t	keysize		: 1;
-	uint16_t	dummy4		: 1;
 	uint16_t	dummy5		: 1;
 	uint16_t	dummy6		: 1;
 	uint16_t	dummy7		: 1;
@@ -69,6 +70,7 @@ void helpmenu(void)
 {
 	printf("\nHelp menu: trustx_keygen <option> ...<option>\n");
 	printf("option:- \n");
+	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
 	printf("-g <Key OID>    : Generate Key in OID 0xNNNN \n");
 	printf("-t <key type>  	: Key type Auth:0x01 Enc :0x02 HFWU:0x04\n");
 	printf("                           DevM:0X08 Sign:0x10 Agmt:0x20\n");
@@ -138,6 +140,10 @@ int main (int argc, char **argv)
         {
 			switch (option)
             {
+				case 'b': // Set I2C Bus
+					uOptFlag.flags.i2cbus = 1;
+					strcpy(pTrustX_I2C_Bus,optarg);
+					break;
 				case 'g': // Generate Key
 					uOptFlag.flags.read = 1;
 					optiga_key_id = _ParseHexorDec(optarg);			 	
