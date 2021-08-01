@@ -125,7 +125,7 @@ int main (int argc, char **argv)
         opterr = 0; // Disable getopt error messages in case of unknown parameters
 
         // Loop through parameters with getopt.
-        while (-1 != (option = getopt(argc, argv, "r:w:o:i:f:c:h")))
+        while (-1 != (option = getopt(argc, argv, "b:r:w:o:i:f:c:h")))
         {
 			switch (option)
 			{
