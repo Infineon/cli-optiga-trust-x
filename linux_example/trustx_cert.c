@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
@@ -40,13 +41,13 @@
 #define MAX_OID_PUB_CERT_SIZE	1728
 
 typedef struct _OPTFLAG {
+	uint16_t	i2cbus		: 1;
 	uint16_t	read		: 1;
 	uint16_t	write		: 1;
 	uint16_t	output		: 1;
 	uint16_t	format		: 1;
 	uint16_t	clear		: 1;
 	uint16_t	input		: 1;
-	uint16_t	dummy6		: 1;
 	uint16_t	dummy7		: 1;
 	uint16_t	dummy8		: 1;
 	uint16_t	dummy9		: 1;
@@ -68,6 +69,7 @@ void helpmenu(void)
 {
 	printf("\nHelp menu: trustx_cert <option> ...<option>\n");
 	printf("option:- \n");
+	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
 	printf("-r <Cert OID>  	: Read Certificate from OID 0xNNNN \n");
 	printf("-w <Cert OID>  	: Write Certificte to OID\n");
 	printf("-o <filename>  	: Output certificate to file \n");
@@ -126,7 +128,11 @@ int main (int argc, char **argv)
         while (-1 != (option = getopt(argc, argv, "r:w:o:i:f:c:h")))
         {
 			switch (option)
-            {
+			{
+				case 'b': // Set I2C Bus
+					uOptFlag.flags.i2cbus = 1;
+					strcpy(pTrustX_I2C_Bus,optarg);
+					break;
 				case 'r': // Read Cert
 					uOptFlag.flags.read = 1;
 					optiga_oid = _ParseHexorDec(optarg);			 	
