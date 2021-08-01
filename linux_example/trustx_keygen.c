@@ -42,7 +42,7 @@
 #define MAX_OID_PUB_CERT_SIZE	1728
 
 typedef struct _OPTFLAG {
-	xuint16_t	i2cbus		: 1;
+	uint16_t	i2cbus		: 1;
 	uint16_t	read		: 1;
 	uint16_t	type		: 1;
 	uint16_t	output		: 1;
