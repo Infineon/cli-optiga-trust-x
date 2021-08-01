@@ -56,6 +56,14 @@ union _uOptFlag {
 	uint16_t	all;
 } uOptFlag;
 
+void helpmenu(void)
+{
+	printf("\nHelp menu: trustx_read_status <option> ...<option>\n");
+	printf("option:- \n");
+	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
+	printf("-h Print this help menu\n");
+}
+
 int main (int argc, char **argv)
 {
 	int option = 0;
