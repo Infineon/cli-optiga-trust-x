@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
@@ -38,12 +39,12 @@
 #include "trustx.h"
 
 typedef struct _OPTFLAG {
+	uint16_t	i2cbus		: 1;
 	uint16_t	verify		: 1;
 	uint16_t	input		: 1;
 	uint16_t	signature	: 1;
 	uint16_t	hash		: 1;
 	uint16_t	pubkey		: 1;
-	uint16_t	dummy5		: 1;
 	uint16_t	dummy6		: 1;
 	uint16_t	dummy7		: 1;
 	uint16_t	dummy8		: 1;
@@ -65,6 +66,7 @@ void _helpmenu(void)
 {
 	printf("\nHelp menu: trustx_verify <option> ...<option>\n");
 	printf("option:- \n");
+	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
 	printf("-k <OID Key>   : Read Certificate from OID 0xNNNN \n");
 	printf("-i <filename>  : Input Data file\n");
 	printf("-s <signature> : Signature file\n");
@@ -210,10 +212,14 @@ int main (int argc, char **argv)
         opterr = 0; // Disable getopt error messages in case of unknown parameters
 
         // Loop through parameters with getopt.
-        while (-1 != (option = getopt(argc, argv, "k:i:s:p:Hh")))
+        while (-1 != (option = getopt(argc, argv, "b:k:i:s:p:Hh")))
         {
 			switch (option)
             {
+				case 'b': // Set I2C Bus
+					uOptFlag.flags.i2cbus = 1;
+					strcpy(pTrustX_I2C_Bus,optarg);
+					break;
 				case 'k': // Cert OID 
 					uOptFlag.flags.verify = 1;
 					optiga_oid = _ParseHexorDec(optarg);			 	
