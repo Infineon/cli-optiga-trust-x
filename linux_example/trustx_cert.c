@@ -94,7 +94,7 @@ int main (int argc, char **argv)
 {
 	optiga_lib_status_t return_status;
 	uint16_t offset, bytes_to_read;
-    uint16_t optiga_oid;
+    uint16_t optiga_oid = 0;
     uint8_t read_data_buffer[2048];
     uint8_t *pCert;
     uint16_t certLen;
@@ -165,7 +165,16 @@ int main (int argc, char **argv)
 			}
 		}
     } while (0); // End of DO WHILE FALSE loop.
- 
+
+    // If -b argument is given but others are not then exit
+    if (optiga_oid == 0) {
+        helpmenu();
+        exit(0);
+    }
+
+/***************************************************************
+ * Example
+ **************************************************************/
 	return_status = trustX_Open();
 	if (return_status != OPTIGA_LIB_SUCCESS)
 		exit(1);
