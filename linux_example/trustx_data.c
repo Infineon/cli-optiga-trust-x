@@ -222,12 +222,12 @@ int main (int argc, char **argv)
 			skip_flag = 1;
 			break;
 		case 0xE0F0:
-			printf("Device Privte Key 1         [0x%.4X] ", optiga_oid);
+			printf("Device Private Key 1         [0x%.4X] ", optiga_oid);
 			break;
 		case 0xE0F1:
 		case 0xE0F2:
 		case 0xE0F3:
-			printf("Device Privte Key x         [0x%.4X] ", optiga_oid);
+			printf("Device Private Key x         [0x%.4X] ", optiga_oid);
 			break;
 		case 0xE100:
 		case 0xE101:
