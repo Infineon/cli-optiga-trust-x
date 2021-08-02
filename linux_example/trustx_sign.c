@@ -133,37 +133,41 @@ uint16_t _writeTo(uint8_t *buf, uint32_t len, const char *filename)
 
 static uint16_t _readFrom(uint8_t *data, uint8_t *filename)
 {
-	
 	FILE *datafile;
 	uint16_t len;
 	uint8_t buf[2048];
 	uint16_t ret;
 
-	//open 
-	datafile = fopen((const char *)filename,"rb");
-	if (!datafile)
-	{
+	// check if file exists first
+	if( access((const char *)filename, F_OK ) == 0 ) {
+		// file exists open it
+		datafile = fopen((const char *)filename,"rb");
+		if (!datafile)
+		{
+			return 0;
+		}
+
+		//Read file
+		len = fread(buf, 1, sizeof(buf), datafile);
+		if (len > 0)
+		{
+			printf("Input data : \n");
+			_hexdump(buf,len);
+
+			SHA256(buf, len, data);
+
+			printf("Digest : \n");
+			_hexdump(data,32);
+			ret = 32;
+		}
+
+		fclose(datafile);
+	} else {
+		// file doesn't exist
 		return 0;
 	}
 
-	//Read file
-	len = fread(buf, 1, sizeof(buf), datafile); 
-	if (len > 0)
-	{
-		printf("Input data : \n");
-		_hexdump(buf,len);
-
-		SHA256(buf, len, data);
-
-		printf("Digest : \n");
-		_hexdump(data,32);
-		ret = 32;
-	}
-
-	fclose(datafile);
-
 	return ret;
-
 }
 
 int main (int argc, char **argv)
