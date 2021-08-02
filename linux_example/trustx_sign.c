@@ -172,7 +172,7 @@ int main (int argc, char **argv)
 {
 	optiga_lib_status_t return_status;
 
-	optiga_key_id_t optiga_key_id;
+	optiga_key_id_t optiga_key_id = 0;
 	uint8_t signature [100];     //To store the signture generated
     uint16_t signature_length = sizeof(signature);
     uint8_t digest[100];
@@ -234,7 +234,12 @@ int main (int argc, char **argv)
 			}
 		}
     } while (0); // End of DO WHILE FALSE loop.
- 
+
+    // If -b argument is given but others are not then exit
+    if (optiga_key_id == 0) {
+        _helpmenu();
+        exit(0);
+    }
 
 /***************************************************************
  * Example 
