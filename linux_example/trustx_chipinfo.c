@@ -102,6 +102,9 @@ int main (int argc, char **argv)
 		}
 	} while (0); // End of DO WHILE FALSE loop.
 
+/***************************************************************
+ * Example
+ **************************************************************/
 	return_status = trustX_Open();
 	if (return_status != OPTIGA_LIB_SUCCESS)
 		exit(1);

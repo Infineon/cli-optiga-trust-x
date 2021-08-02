@@ -64,9 +64,9 @@ union _uOptFlag {
 
 static void _helpmenu(void)
 {
-	printf("\nHelp menu: trustx_obj <option> ...<option>\n");
+	printf("\nHelp menu: trustx_data <option> ...<option>\n");
 	printf("option:- \n");
-	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
+	printf("-b            : Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
 	printf("-r <OID>      : Read from OID 0xNNNN \n");
 	printf("-w <OID>      : Write to OID\n");
 	printf("-i <filename> : Input file \n");
@@ -93,7 +93,7 @@ int main (int argc, char **argv)
 	optiga_lib_status_t return_status;
 	uint16_t offset =0;
 	uint32_t bytes_to_read;
-    uint16_t optiga_oid;
+    uint16_t optiga_oid = 0;
     uint8_t read_data_buffer[2048];
     uint8_t mode = OPTIGA_UTIL_WRITE_ONLY;
     uint8_t skip_flag;
@@ -163,8 +163,14 @@ int main (int argc, char **argv)
 		}
     } while (0); // End of DO WHILE FALSE loop.
 
+    // If -b argument is given but others are not then exit
+    if(optiga_oid == 0) {
+        _helpmenu();
+        exit(0);
+    }
+
 /***************************************************************
- * Example 
+ * Example
  **************************************************************/
 	return_status = trustX_Open();
 	if (return_status != OPTIGA_LIB_SUCCESS)
