@@ -249,10 +249,11 @@ int main (int argc, char **argv)
     } while (0); // End of DO WHILE FALSE loop.
 
     // If -b argument is given but others are not then exit
-    if (optiga_oid == 0) {
+    if (uOptFlag.flags.verify != 1 && uOptFlag.flags.pubkey != 1) {
         _helpmenu();
         exit(0);
     }
+
 
 /***************************************************************
  * Example 
