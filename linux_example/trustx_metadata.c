@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "optiga/ifx_i2c/ifx_i2c_config.h"
 #include "optiga/optiga_util.h"
@@ -38,13 +39,13 @@ static const uint8_t __bLOCK[] = {0x01,0x07}; // lock LcsO
 static const uint8_t __bTERMINATE[] = {0x01,0x0F}; // terminate LcsO
 
 typedef struct _OPTFLAG {
+	uint16_t	i2cbus		: 1;
 	uint16_t	read		: 1;
 	uint16_t	write		: 1;
 	uint16_t	lcschange	: 1;
 	uint16_t	lcsread		: 1;
 	uint16_t	lcslock		: 1;
 	uint16_t	lcsterminate: 1;
-	uint16_t	dummy6		: 1;
 	uint16_t	dummy7		: 1;
 	uint16_t	dummy8		: 1;
 	uint16_t	dummy9		: 1;
@@ -65,6 +66,7 @@ static void _helpmenu(void)
 {
 	printf("\nHelp menu: trustx_metadata <option> ...<option>\n");
 	printf("option:- \n");
+	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
 	printf("-r <OID>  : Read metadata of OID 0xNNNN \n");
 	printf("-w <OID>  : Write metadata of OID\n");
 	printf("-C <data> : Set Change mode (a:allow change,\n"); 
@@ -147,7 +149,7 @@ int main (int argc, char **argv)
 {
 	optiga_lib_status_t return_status;
 	uint16_t bytes_to_read;
-    uint16_t optiga_oid;
+    uint16_t optiga_oid = 0;
     uint8_t read_data_buffer[2048];
     uint8_t mode[200];
     uint16_t modeLen;
@@ -177,10 +179,14 @@ int main (int argc, char **argv)
         opterr = 0; // Disable getopt error messages in case of unknown parameters
 
         // Loop through parameters with getopt.
-        while (-1 != (option = getopt(argc, argv, "r:w:C:R:LTh")))
+        while (-1 != (option = getopt(argc, argv, "b:r:w:C:R:LTh")))
         {
 			switch (option)
-            {
+			{
+				case 'b': // Set I2C Bus
+					uOptFlag.flags.i2cbus = 1;
+					strcpy(pTrustX_I2C_Bus,optarg);
+					break;
 				case 'r': // Read
 					uOptFlag.flags.read = 1;
 					optiga_oid = _ParseHexorDec(optarg);			 	
@@ -223,6 +229,12 @@ int main (int argc, char **argv)
 			}
 		}
     } while (0); // End of DO WHILE FALSE loop.
+
+    // If -b argument is given but others are not then exit
+    if (optiga_oid == 0) {
+        _helpmenu();
+        exit(0);
+    }
 
 /***************************************************************
  * Example 

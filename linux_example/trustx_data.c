@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
@@ -37,13 +38,13 @@
 #include "trustx.h"
 
 typedef struct _OPTFLAG {
+	uint16_t	i2cbus		: 1;
 	uint16_t	read		: 1;
 	uint16_t	write		: 1;
 	uint16_t	infile		: 1;
 	uint16_t	outfile		: 1;
 	uint16_t	offset		: 1;
 	uint16_t	erase		: 1;
-	uint16_t	dummy6		: 1;
 	uint16_t	dummy7		: 1;
 	uint16_t	dummy8		: 1;
 	uint16_t	dummy9		: 1;
@@ -63,8 +64,9 @@ union _uOptFlag {
 
 static void _helpmenu(void)
 {
-	printf("\nHelp menu: trustx_obj <option> ...<option>\n");
+	printf("\nHelp menu: trustx_data <option> ...<option>\n");
 	printf("option:- \n");
+	printf("-b            : Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
 	printf("-r <OID>      : Read from OID 0xNNNN \n");
 	printf("-w <OID>      : Write to OID\n");
 	printf("-i <filename> : Input file \n");
@@ -91,7 +93,7 @@ int main (int argc, char **argv)
 	optiga_lib_status_t return_status;
 	uint16_t offset =0;
 	uint32_t bytes_to_read;
-    uint16_t optiga_oid;
+    uint16_t optiga_oid = 0;
     uint8_t read_data_buffer[2048];
     uint8_t mode = OPTIGA_UTIL_WRITE_ONLY;
     uint8_t skip_flag;
@@ -120,10 +122,14 @@ int main (int argc, char **argv)
         opterr = 0; // Disable getopt error messages in case of unknown parameters
 
         // Loop through parameters with getopt.
-        while (-1 != (option = getopt(argc, argv, "r:w:i:o:p:eh")))
+        while (-1 != (option = getopt(argc, argv, "b:r:w:i:o:p:eh")))
         {
 			switch (option)
-            {
+			{
+				case 'b': // Set I2C Bus
+					uOptFlag.flags.i2cbus = 1;
+					strcpy(pTrustX_I2C_Bus,optarg);
+					break;
 				case 'r': // Read Cert
 					uOptFlag.flags.read = 1;
 					optiga_oid = _ParseHexorDec(optarg);			 	
@@ -157,8 +163,14 @@ int main (int argc, char **argv)
 		}
     } while (0); // End of DO WHILE FALSE loop.
 
+    // If -b argument is given but others are not then exit
+    if(optiga_oid == 0) {
+        _helpmenu();
+        exit(0);
+    }
+
 /***************************************************************
- * Example 
+ * Example
  **************************************************************/
 	return_status = trustX_Open();
 	if (return_status != OPTIGA_LIB_SUCCESS)
@@ -210,12 +222,12 @@ int main (int argc, char **argv)
 			skip_flag = 1;
 			break;
 		case 0xE0F0:
-			printf("Device Privte Key 1         [0x%.4X] ", optiga_oid);
+			printf("Device Private Key 1         [0x%.4X] ", optiga_oid);
 			break;
 		case 0xE0F1:
 		case 0xE0F2:
 		case 0xE0F3:
-			printf("Device Privte Key x         [0x%.4X] ", optiga_oid);
+			printf("Device Private Key x         [0x%.4X] ", optiga_oid);
 			break;
 		case 0xE100:
 		case 0xE101:

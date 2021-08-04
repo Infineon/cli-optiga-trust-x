@@ -59,7 +59,7 @@
 
 //extern
 extern char *i2c_if;
-extern char dev[];
+extern char pTrustX_I2C_Bus[100];
 
 // ********** typedef
 typedef struct _tag_trustX_UID {

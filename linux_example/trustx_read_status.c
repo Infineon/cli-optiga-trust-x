@@ -25,24 +25,92 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+
 #include "optiga/ifx_i2c/ifx_i2c_config.h"
 #include "optiga/optiga_util.h"
 
 #include "trustx.h"
 
+typedef struct _OPTFLAG {
+	uint16_t	i2cbus		: 1;
+	uint16_t	dummy1		: 1;
+	uint16_t	dummy2		: 1;
+	uint16_t	dummy3		: 1;
+	uint16_t	dummy4		: 1;
+	uint16_t	dummy5		: 1;
+	uint16_t	dummy6		: 1;
+	uint16_t	dummy7		: 1;
+	uint16_t	dummy8		: 1;
+	uint16_t	dummy9		: 1;
+	uint16_t	dummy10		: 1;
+	uint16_t	dummy11		: 1;
+	uint16_t	dummy12		: 1;
+	uint16_t	dummy13		: 1;
+	uint16_t	dummy14		: 1;
+	uint16_t	dummy15		: 1;
+}OPTFLAG;
+
+union _uOptFlag {
+	OPTFLAG	flags;
+	uint16_t	all;
+} uOptFlag;
+
+void helpmenu(void)
+{
+	printf("\nHelp menu: trustx_read_status <option> ...<option>\n");
+	printf("option:- \n");
+	printf("-b Set I2C bus (Default %s) \n", pTrustX_I2C_Bus);
+	printf("-h Print this help menu\n");
+}
+
 int main (int argc, char **argv)
 {
+	int option = 0;
+	uOptFlag.all = 0;
 	optiga_lib_status_t return_status;
 	uint16_t i, j, k, skip_flag;
 	
 	uint16_t offset, bytes_to_read;
-    uint16_t optiga_oid;
-    uint8_t read_data_buffer[1024];
+	uint16_t optiga_oid;
+	uint8_t read_data_buffer[1024];
 
+	do // Begin of DO WHILE(FALSE) for error handling.
+	{
+		// ---------- Check for command line parameters ----------
+		if (1 == argc)
+		{
+		}
+
+		// ---------- Command line parsing with getopt ----------
+		opterr = 0; // Disable getopt error messages in case of unknown parameters
+
+		// Loop through parameters with getopt.
+		while (-1 != (option = getopt(argc, argv, "b:h")))
+		{
+			switch (option)
+			{
+				case 'b': // Set I2C Bus
+					uOptFlag.flags.i2cbus = 1;
+					strcpy(pTrustX_I2C_Bus,optarg);
+					break;
+				case 'h': // Print Help Menu
+					helpmenu();
+					exit(0);
+				default:  // Any other command Print Help Menu
+					helpmenu();
+					exit(0);
+					break;
+			}
+		}
+	} while (0); // End of DO WHILE FALSE loop.
+
+/***************************************************************
+ * Example
+ **************************************************************/
 	return_status = trustX_Open();
 	if (return_status != OPTIGA_LIB_SUCCESS)
 		exit(1);
-
 
 	do
 	{

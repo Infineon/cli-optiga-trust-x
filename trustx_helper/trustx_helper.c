@@ -40,7 +40,7 @@
 
 //Globe
 char *i2c_if;
-char dev[]="/dev/i2c-1";
+char pTrustX_I2C_Bus[]="/dev/i2c-1";
 
 extern void pal_gpio_init(void);
 extern void pal_gpio_deinit(void);
@@ -583,7 +583,7 @@ optiga_lib_status_t trustX_Open(void)
 	TRUSTX_HELPER_DBGFN(">> Enter trustX_Open()\n");
 	do
 	{
-		i2c_if = dev;
+		i2c_if = pTrustX_I2C_Bus;
 		pal_gpio_init();
 		pal_os_event_init();
 
