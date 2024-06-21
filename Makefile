@@ -37,6 +37,8 @@ LIBDIR += $(TRUSTX)/optiga/common
 LIBDIR += $(TRUSTX)/optiga/cmd
 LIBDIR += trustx_helper
 
+ARCH := $(shell dpkg --print-architecture)
+
 #OTHDIR = $(TRUSTX)/examples/optiga
 #OTHDIR += $(TRUSTX)/examples/ecdsa_utils
 #OTHDIR += $(TRUSTX)/examples/authenticate_chip
@@ -46,7 +48,13 @@ LIBDIR += trustx_helper
 BINDIR = bin
 APPDIR = linux_example
 ENGDIR = trustx_engine
+
+ifeq ($(ARCH), arm64)
+LIB_INSTALL_DIR = /usr/lib/aarch64-linux-gnu
+else
 LIB_INSTALL_DIR = /usr/lib/arm-linux-gnueabihf
+endif
+
 ENGINE_INSTALL_DIR = $(LIB_INSTALL_DIR)/engines-1.1
 
 INCDIR = $(TRUSTX)/optiga/include
@@ -163,11 +171,11 @@ $(BINDIR)/$(ENG): %: $(ENGOBJ) $(INCSRC) $(BINDIR)/$(LIB)
 	@mkdir -p bin
 	@$(CC) $(LDFLAGS) $(LDFLAGS_1) $(ENGOBJ) -shared -o $@
 
-$(APPS): %: $(OTHOBJ) $(INCSRC) %.o
+$(APPS): %: $(OTHOBJ) $(INCSRC) $(BINDIR)/$(LIB) %.o
 	@echo "******* Linking $@ "
 	@mkdir -p bin
-	@$(CC) $(LDFLAGS) $(LDFLAGS_1) $@.o $(OTHOBJ) -o $@
-	@cp $@ bin/.
+	@$(CC) $@.o $(LDFLAGS_1) $(LDFLAGS) $(OTHOBJ) -o $@
+	@mv $@ bin/.	
 
 $(BINDIR)/$(LIB): %: $(LIBOBJ) $(INCSRC)
 	@echo "******* Linking $@ "
